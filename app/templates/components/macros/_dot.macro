@@ -1,0 +1,5 @@
+<!-- 定义宏(类似于定义函数)：macro,有些可以设置默认值 -->
+{# dot 默认为灰色点 #}
+{% macro dot(color="#bdb7b7") -%}
+	<i style="display:inline-block;position:relative;top:2px;height:8px;width:8px;border-radius:100%;background-color:{{color}};"></i>
+{%- endmacro %}

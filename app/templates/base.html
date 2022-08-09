@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+{% block head %}
+    <meta charset="utf-8">
+    <title>{% block title %}{% endblock %}-personal</title>
+{% block css %}
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='css/base.css') }}"/>
+{% endblock css %}
+{% block script %}
+    <script src="https://unpkg.com/react@16/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js" crossorigin></script>
+    <script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
+    <script src="{{ url_for('static',filename='js/base.js') }}"></script>
+{% endblock script %}
+{% endblock head %}
+<body>
+    <div class="header">
+        {% block navbar %}
+        {# 导航条 #}
+            {% include 'components/_navbar.html' ignore missing %}
+        {% endblock navbar %}
+    </div>
+
+    <div class="container">
+        {% block content %}
+        {# 待子模板继承 #}
+        {% endblock content %}
+    </div>
+
+    <div class="footer" style="margin-top: 30px;margin-bottom: 50px;">
+        Copyright 2018 by <a href="#">Limbo</a>
+        <!-- www.easytestapi.com -->
+    </div>
+
+    <script type="text/javascript">
+            var list = $(".date")
+            for (var i = 0; i < list.length; i++) {
+                list[i].innerText = list[i].innerText.split(' ')[0]
+            }
+
+    </script>
+</body>
+</html>

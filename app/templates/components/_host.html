@@ -1,0 +1,10 @@
+{% from 'components/macros/_dot.macro' import dot %}
+<div>
+    <hr>
+    <p> {% if host.is_online %}
+            {{ dot('#04a32a') }}
+        {% else %}
+            {{ dot() }}
+        {%endif%}
+        {{host.ssh_cmd}} <a href="javascript:void(0);" id="hand-refresh">刷新</a></p>
+</div>

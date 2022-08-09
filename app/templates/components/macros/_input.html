@@ -1,0 +1,14 @@
+<!-- 定义宏(类似于定义函数)：macro,有些可以设置默认值 -->
+{% macro input(class, id, name, value='', type='text', placeholder='', size=20) -%}
+	<input class="{{ class }}"
+			id="{{ id }}"
+			type="{{ type }}"
+			name="{{ name }}"
+			value="{{ value|e }}"
+			placeholder="{{ placeholder|e }}"
+			size="{{ size }}">
+{%- endmacro %}
+{#
+	1.e 是避免有一些特殊字符会自动转义
+	2.- 是删除块之前或之后的空格
+#}

@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>upload</title>
+    <script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
+</head>
+<body>
+    <h1>单文件上传示例</h1>
+    <form>
+       选择文件:  <input type="file" id="file1">
+        <input type="submit" value="上传" onclick="upload1();">
+    </form>
+
+    <h1>多文件上传示例</h1>
+    <form>
+      选择文件: <input type="file" id="file2" multiple="multiple" />
+      <input type="submit" onclick="upload2();"/>
+    </form>
+
+    <h1>断点续传</h1>
+    <form>
+        选择文件: <input type="file" id="file3">
+        <input type="submit" value="上传" onclick="upload3();">
+    </form>
+</body>
+<script>
+    window.onload=function(){
+        $('form').each(function(){
+            this.onsubmit = function(e){
+                e.preventDefault(); // 阻止表单的默认行为
+
+            }
+        })
+    }
+
+    function upload_ajax(url, file, headers){
+        $.ajax({
+           url: url,
+           type: "POST",
+           headers: headers,
+           cache: false, //上传文件无需缓存
+           processData: false, //用于对data参数进行序列化处理 这里必须false
+           mimeType: "multipart/form-data",
+           contentType: false, //必须
+           data: file,
+           dataType: "JSON",    // 期望响应
+           async: false, // 要同步有序上传
+           success: function (resp) {
+               console.log("上传完成!");
+           },
+            error: function (xmlrequest, textStatus, errorThrown) {
+                console.log("error:" + textStatus + errorThrown + ":" + JSON.stringify(xmlrequest));
+        }
+       })
+    }
+
+    function upload3_ajax(url, file, headers){
+        $.ajax({
+           url: url,
+           type: "POST",
+           headers: headers,
+           cache: false, //上传文件无需缓存
+           processData: false, //用于对data参数进行序列化处理 这里必须false
+           mimeType: "multipart/form-data",
+           contentType: false, //必须
+           data: file,
+           dataType: "JSON",    // 期望响应
+           async:false, // 要同步有序上传
+           success: function (resp) {
+               console.log("上传完成!");
+           },
+            error: function (xmlrequest, textStatus, errorThrown) {
+                console.log("error:" + textStatus + errorThrown + ":" + JSON.stringify(xmlrequest));
+        }
+       })
+    }
+
+    var upload1 = function(){
+        var file = document.getElementById('file1').files[0];
+        var headers = {
+            "File-Name": encodeURI(file.name)
+        };
+        upload_ajax('/upload/file', file, headers);
+    };
+
+    var upload2 = function(){
+        var files = document.getElementById('file2').files;
+        for(var i=0;i<files.length;i++){
+            let headers = {
+                "File-Name": encodeURI(files[i].name)
+            };
+            upload_ajax('/upload/file', files[i], headers);
+        }
+    };
+
+    var upload3 = function(){
+        var file = document.getElementById('file3').files[0];
+
+        const filename = file.name; // 文件名称
+        const file_size = file.size; // 文件大小
+        var block_size = 1024*1024*10;  // 块大小
+        const count = Math.ceil(file.size/block_size); // 分几个块
+        var start = 0; // 上传时候的开始位置
+        for (let i=1;i<=count;i++) {
+            var end = start + block_size; // 结束位置
+            if (end > file_size){
+                // 当结束位置的大小 大于 文件总大小的时候说明要发送最后一个块了
+                end = file_size;
+                block_size = end - start;
+            }
+            var headers = {
+                "Content-Type": "application/octet-stream",
+                "Content-Range": `bytes ${start}-${end}/${file_size}`,
+                "Content-Disposition": `attachment; filename=${encodeURI(filename)}`,
+                "Content-Index": `${i}-${count}`
+            };
+            console.log(i, start, end, end-start);
+            upload3_ajax('/upload/breakpoint/http', file.slice(start, end), headers);
+            start += block_size;
+        }
+    };
+
+
+</script>
+</html>
